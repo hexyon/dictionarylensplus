@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<link href="favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary Lens</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007AFF;
+            --background-color: #ffffff;
+            --text-color: #1C1C1E;
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            src: url('Roboto/Roboto-Regular.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'Roboto-Bold';
+            src: url('Roboto/Roboto-Bold.ttf') format('truetype');
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            padding: 2rem 1rem;
+        }
+
+        .search-input {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            display: block;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            background-color: rgba(118, 118, 128, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            background-color: rgba(118, 118, 128, 0.08);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+        }
+
+        .word {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .image-gallery {
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 0.5rem;
+        }
+
+        .carousel {
+            background-color: rgba(118, 118, 128, 0.08);
+        }
+
+        .carousel-inner {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem 0;
+        }
+
+        .carousel-controls button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(0, 122, 255, 0.1);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .carousel-controls button:hover {
+            background-color: rgba(0, 122, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .carousel-controls button:active {
+            background-color: rgba(0, 122, 255, 0.3);
+            transform: scale(0.95);
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            width: 16px;
+            height: 16px;
+            background-size: 100%;
+            filter: invert(34%) sepia(98%) saturate(3144%) hue-rotate(205deg) brightness(102%) contrast(107%);
+        }
+
+        .definition-container {
+            height: 100%;
+        }
+
+        .card {
+            height: 100%;
+            background-color: #fff;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .definition-content {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-color);
+        }
+
+        .phonetic {
+            color: var(--primary-color);
+            font-style: italic;
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        .part-of-speech {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .definition-item {
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--primary-color);
+        }
+
+        .example {
+            color: #666;
+            font-style: italic;
+            margin-top: 0.5rem;
+            padding-left: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .synonyms-section, .antonyms-section {
+            margin-top: 1.5rem;
+        }
+
+        .synonym-chip, .antonym-chip {
+            display: inline-block;
+            background-color: rgba(0, 122, 255, 0.1);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .synonym-chip:hover, .antonym-chip:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .nav-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(0, 122, 255, 0.1);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: all 0.2s ease;
+            color: var(--primary-color);
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background-color: rgba(0, 122, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .nav-button:active:not(:disabled) {
+            background-color: rgba(0, 122, 255, 0.3);
+            transform: scale(0.95);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-button.clickable-toggle.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .clickable-word {
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .clickable-word:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+
+        .clickable-active .part-of-speech {
+            color: black;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(118, 118, 128, 0.12);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        .error-message {
+            color: #FF3B30;
+            text-align: center;
+            padding: 20px;
+            display: none;
+            font-size: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .word {
+                font-size: 2rem;
+            }
+
+            .carousel-item img {
+                height: 200px;
+            }
+
+            .carousel-controls button {
+                width: 32px;
+                height: 32px;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation-container mb-4">
+            <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
+                <button class="nav-button" id="prevButton" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="nav-button clickable-toggle" id="clickableToggle">
+                    <i class="fas fa-hand-pointer"></i>
+                </button>
+                <button class="nav-button" id="nextButton" disabled>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <input type="text" class="search-input" placeholder="Type a word to explore...">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+            </div>
+            <div class="error-message"></div>
+        </div>
+
+        <h1 class="word text-center">Dictionary Lens+</h1>
+
+        <div class="content row">
+            <div class="col-md-4 mb-4">
+                <div id="wordImages" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="d-flex align-items-center justify-content-center" style="height: 300px; background: rgba(118, 118, 128, 0.08);">
+                                <p class="text-muted">Search for a word to see related images</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-controls">
+                    <button class="btn" type="button" data-bs-target="#wordImages" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="btn" type="button" data-bs-target="#wordImages" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="definition-container">
+                    <div id="wordDefinition" class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Definition</h2>
+                            <div class="definition-content">
+                                <p class="text-muted">Enter a word in the search box above to see its definition and related images.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            const wordTitle = document.querySelector('.word');
+            const definitionContent = document.querySelector('.definition-content');
+            const carouselInner = document.querySelector('.carousel-inner');
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+            const clickableToggle = document.getElementById('clickableToggle');
+            const loading = document.querySelector('.loading');
+            const errorMessage = document.querySelector('.error-message');
+
+            let searchTimeout;
+            let searchHistory = [];
+            let currentHistoryIndex = -1;
+            let isClickableMode = false;
+            let isNavigating = false;
+            let currentWord = '';
+
+            async function fetchWordData(word) {
+                try {
+                    const [dictResponse, synonymsResponse, antonymsResponse, imageResponse] = await Promise.all([
+                        fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`),
+                        fetch(`https://api.datamuse.com/words?rel_syn=${word}`),
+                        fetch(`https://api.datamuse.com/words?rel_ant=${word}`),
+                        fetch(`/api/pixabay?word=${encodeURIComponent(word)}`)
+                    ]);
+
+                    const [dictionary, synonyms, antonyms, imageData] = await Promise.all([
+                        dictResponse.json(),
+                        synonymsResponse.json(),
+                        antonymsResponse.json(),
+                        imageResponse.json()
+                    ]);
+
+                    return {
+                        dictionary,
+                        synonyms,
+                        antonyms,
+                        images: imageData.hits ? imageData.hits.map(img => img.webformatURL) : []
+                    };
+                } catch (error) {
+                    throw new Error('Failed to fetch word data');
+                }
+            }
+
+            function makeTextClickable(text) {
+                if (!text) return '';
+                
+                // Only make words longer than 2 characters clickable to avoid short words like "a", "is", etc.
+                return text.split(/\b/).map(word => {
+                    const cleanWord = word.replace(/[^a-zA-Z]/g, '');
+                    if (/^[a-zA-Z]+$/.test(cleanWord) && cleanWord.length > 2) {
+                        return `<span class="clickable-word" data-word="${cleanWord}">${word}</span>`;
+                    }
+                    return word;
+                }).join('');
+            }
+
+            function updateUI(word, data) {
+                try {
+                    const { dictionary, synonyms, antonyms, images } = data;
+                    
+                    if (!dictionary || dictionary.error || !Array.isArray(dictionary) || dictionary.length === 0) {
+                        throw new Error('Invalid dictionary data');
+                    }
+
+                    const wordData = dictionary[0];
+                    currentWord = word;
+
+                    // Update word title
+                    wordTitle.textContent = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+
+                    // Update definition
+                    let html = '';
+                    
+                    // Add phonetic if available
+                    const phonetic = wordData.phonetic || (wordData.phonetics && wordData.phonetics[0] && wordData.phonetics[0].text) || '';
+                    if (phonetic) {
+                        html += `<div class="phonetic">${phonetic}</div>`;
+                    }
+
+                    // Process meanings
+                    if (wordData.meanings && Array.isArray(wordData.meanings)) {
+                        wordData.meanings.forEach(meaning => {
+                            html += `<div class="part-of-speech">${meaning.partOfSpeech}</div>`;
+
+                            if (meaning.definitions && Array.isArray(meaning.definitions)) {
+                                meaning.definitions.forEach(definition => {
+                                    const processedDefinition = isClickableMode ? 
+                                        makeTextClickable(definition.definition) : 
+                                        definition.definition;
+
+                                    const processedExample = definition.example && isClickableMode ? 
+                                        makeTextClickable(definition.example) : 
+                                        definition.example;
+
+                                    html += `
+                                        <div class="definition-item">
+                                            ${processedDefinition}
+                                            ${definition.example ? `
+                                                <div class="example">"${processedExample}"</div>
+                                            ` : ''}
+                                        </div>
+                                    `;
+                                });
+                            }
+                        });
+                    }
+
+                    // Add synonyms
+                    if (synonyms && Array.isArray(synonyms) && synonyms.length > 0) {
+                        html += `
+                            <div class="synonyms-section">
+                                <div class="part-of-speech">Synonyms</div>
+                                <div>
+                                    ${synonyms.slice(0, 10).map(syn => 
+                                        `<span class="synonym-chip" data-word="${syn.word}">${syn.word}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Add antonyms
+                    if (antonyms && Array.isArray(antonyms) && antonyms.length > 0) {
+                        html += `
+                            <div class="antonyms-section">
+                                <div class="part-of-speech">Antonyms</div>
+                                <div>
+                                    ${antonyms.slice(0, 10).map(ant => 
+                                        `<span class="antonym-chip" data-word="${ant.word}">${ant.word}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    definitionContent.innerHTML = html;
+
+                    // Update images
+                    if (images && Array.isArray(images) && images.length > 0) {
+                        carouselInner.innerHTML = images.map((img, index) => `
+                            <div class="carousel-item ${index === 0 ? 'active' : ''}" data-bs-interval="3000">
+                                <img src="${img}" alt="${word}" class="d-block w-100" loading="lazy">
+                            </div>
+                        `).join('');
+                    } else {
+                        carouselInner.innerHTML = `
+                            <div class="carousel-item active">
+                                <div class="d-flex align-items-center justify-content-center" style="height: 300px; background: rgba(118, 118, 128, 0.08);">
+                                    <p class="text-muted">No images available for "${word}"</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error updating UI:', error);
+                    showError('Error displaying word information');
+                }
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                definitionContent.innerHTML = `<p class="text-muted">${message}</p>`;
+                carouselInner.innerHTML = `
+                    <div class="carousel-item active">
+                        <div class="d-flex align-items-center justify-content-center" style="height: 300px; background: rgba(118, 118, 128, 0.08);">
+                            <p class="text-muted">No image available</p>
+                        </div>
+                    </div>
+                `;
+                wordTitle.textContent = 'Word';
+                currentWord = '';
+            }
+
+            function updateNavigationButtons() {
+                const canGoPrev = currentHistoryIndex > 0 && !isNavigating;
+                const canGoNext = currentHistoryIndex < searchHistory.length - 1 && !isNavigating;
+                
+                prevButton.disabled = !canGoPrev;
+                nextButton.disabled = !canGoNext;
+
+                console.log('Navigation:', {
+                    history: searchHistory,
+                    currentIndex: currentHistoryIndex,
+                    canGoPrev,
+                    canGoNext,
+                    isNavigating
+                });
+            }
+
+            function addToHistory(word) {
+                word = word.toLowerCase().trim();
+                
+                // Don't add if empty or same as current
+                if (!word || word === searchHistory[currentHistoryIndex]) {
+                    return;
+                }
+
+                // If we're not at the end, remove forward history
+                if (currentHistoryIndex < searchHistory.length - 1) {
+                    searchHistory = searchHistory.slice(0, currentHistoryIndex + 1);
+                }
+
+                // Add new word
+                searchHistory.push(word);
+                currentHistoryIndex = searchHistory.length - 1;
+                
+                updateNavigationButtons();
+            }
+
+            async function performSearch(word, addToHistoryFlag = false) {
+                word = word.toLowerCase().trim();
+                if (!word) return;
+
+                try {
+                    loading.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    
+                    const data = await fetchWordData(word);
+                    
+                    if (data.dictionary.error) {
+                        throw new Error('Word not found');
+                    }
+                    
+                    loading.style.display = 'none';
+                    updateUI(word, data);
+
+                    if (addToHistoryFlag) {
+                        addToHistory(word);
+                    }
+
+                } catch (error) {
+                    loading.style.display = 'none';
+                    showError('Word not found or connection error occurred');
+                    console.error('Search error:', error);
+                    
+                    // Still add failed searches to history for navigation consistency
+                    if (addToHistoryFlag) {
+                        addToHistory(word);
+                    }
+                } finally {
+                    isNavigating = false;
+                    updateNavigationButtons();
+                }
+            }
+
+            // Search input handler
+            searchInput.addEventListener('input', function(e) {
+                const word = e.target.value.trim();
+                
+                clearTimeout(searchTimeout);
+                
+                if (word.length > 0) {
+                    searchTimeout = setTimeout(() => {
+                        if (!isNavigating) {
+                            performSearch(word, true);
+                        }
+                    }, 300);
+                } else {
+                    loading.style.display = 'none';
+                    errorMessage.style.display = 'none';
+                    wordTitle.textContent = 'Dictionary Lens';
+                    definitionContent.innerHTML = '<p class="text-muted">Enter a word in the search box above to see its definition and related images.</p>';
+                    carouselInner.innerHTML = `
+                        <div class="carousel-item active">
+                            <div class="d-flex align-items-center justify-content-center" style="height: 300px; background: rgba(118, 118, 128, 0.08);">
+                                <p class="text-muted">Search for a word to see related images</p>
+                            </div>
+                        </div>
+                    `;
+                    currentWord = '';
+                }
+            });
+
+            // Fixed navigation handlers
+            prevButton.addEventListener('click', function() {
+                if (isNavigating || currentHistoryIndex <= 0) {
+                    console.log('Prev navigation blocked');
+                    return;
+                }
+
+                isNavigating = true;
+                updateNavigationButtons();
+
+                currentHistoryIndex--;
+                const word = searchHistory[currentHistoryIndex];
+                searchInput.value = word;
+                
+                console.log('Navigating to previous word:', word);
+                performSearch(word, false);
+            });
+
+            nextButton.addEventListener('click', function() {
+                if (isNavigating || currentHistoryIndex >= searchHistory.length - 1) {
+                    console.log('Next navigation blocked');
+                    return;
+                }
+
+                isNavigating = true;
+                updateNavigationButtons();
+
+                currentHistoryIndex++;
+                const word = searchHistory[currentHistoryIndex];
+                searchInput.value = word;
+                
+                console.log('Navigating to next word:', word);
+                performSearch(word, false);
+            });
+
+            // Clickable toggle
+            clickableToggle.addEventListener('click', function() {
+                isClickableMode = !isClickableMode;
+                this.classList.toggle('active');
+                document.documentElement.classList.toggle('clickable-active', isClickableMode);
+                
+                // Refresh current word if available
+                if (currentWord) {
+                    performSearch(currentWord, false);
+                }
+            });
+
+            // Enhanced click handler
+            document.addEventListener('click', function(e) {
+                // Prevent navigation during click handling
+                if (isNavigating) return;
+                
+                let targetWord = '';
+
+                // Handle data-word attribute first (most reliable)
+                if (e.target.hasAttribute('data-word')) {
+                    targetWord = e.target.getAttribute('data-word').toLowerCase().trim();
+                }
+                // Handle class-based clicks
+                else if (e.target.classList.contains('synonym-chip') || 
+                         e.target.classList.contains('antonym-chip')) {
+                    targetWord = e.target.textContent.toLowerCase().trim();
+                }
+                // Handle clickable words in definitions
+                else if (isClickableMode && e.target.classList.contains('clickable-word')) {
+                    targetWord = (e.target.getAttribute('data-word') || e.target.textContent)
+                        .replace(/[^a-zA-Z]/g, '').toLowerCase().trim();
+                }
+
+                // Only search for words longer than 2 characters
+                if (targetWord && targetWord.length > 2 && targetWord !== currentWord) {
+                    console.log('Clicked word:', targetWord);
+                    searchInput.value = targetWord;
+                    performSearch(targetWord, true);
+                }
+            });
+
+            // Initialize
+            updateNavigationButtons();
+        });
+    </script>
+</body>
+</html>
