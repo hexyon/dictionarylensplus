@@ -142,7 +142,7 @@
                     if (images && Array.isArray(images) && images.length > 0) {
                         carouselInner.innerHTML = images.map((img, index) => `
                             <div class="carousel-item ${index === 0 ? 'active' : ''}" data-bs-interval="3000">
-                                <img src="${img}" alt="${word}" class="d-block w-100" loading="lazy">
+                                <img src="${img}" alt="${word}" class="d-block w-100">
                             </div>
                         `).join('');
                     } else {
